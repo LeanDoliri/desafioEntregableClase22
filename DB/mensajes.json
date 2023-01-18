@@ -1,1 +1,28 @@
-7
+[
+  {
+    "author": {
+      "mail": "leandoliri@gmail.com",
+      "name": "Leandro",
+      "lastName": "Doliri",
+      "age": "25",
+      "username": "Leandro",
+      "avatar": "https://dummyimage.com/250/000/fff"
+    },
+    "text": "Hola!",
+    "date": "18/1/2023 12:03:56",
+    "id": 1
+  },
+  {
+    "author": {
+      "mail": "leandoliri@gmail.com",
+      "name": "Leandro",
+      "lastName": "Doliri",
+      "age": "25",
+      "username": "Leandro",
+      "avatar": "https://dummyimage.com/250/000/fff"
+    },
+    "text": "Hola!!!",
+    "date": "18/1/2023 12:04:38",
+    "id": 2
+  }
+]

@@ -1,6 +1,4 @@
 import express from "express";
-const { Router } = express;
-
 import { Server as HttpServer } from "http";
 import { Server as Socket } from "socket.io";
 
@@ -13,10 +11,6 @@ faker.locale = "es";
 import addRandomProducts from "./faker.js";
 
 import { normalize, schema } from "normalizr";
-import util from "util";
-function print(objeto) {
-  console.log(util.inspect(objeto, false, 12, true));
-}
 
 //--------------------------------------------
 // instancio servidor, socket y api
@@ -53,38 +47,61 @@ const mensajeSchema = new schema.Entity("messages", {
 io.on("connection", async (socket) => {
   console.log("Nuevo cliente conectado!");
 
-  // carga inicial de productos con faker
-  async function addProductsFaker() {
-    for (let i = 0; i < 5; i++) {
-      await productosApi.guardar(addRandomProducts());
-    }
-    const productos = await productosApi.listarAll();
-    socket.emit("productos", productos);
-  }
+  // ---- CHAT ----
+  // // carga inicial de mensajes
+  // const messages = await mensajesApi.listarAll();
+  // socket.emit("messages", messages);
 
-  await addProductsFaker();
+  // // actualizacion de mensajes
+  // socket.on("newMessage", async (message) => {
+  //   mensajesApi.guardar(message);
+  //   const messages = await mensajesApi.listarAll();
+  //   io.sockets.emit("messages", messages);
+  // });
+
+  listarMensajes().then((messages) => {
+    socket.emit("messages", messages);
+  });
+
+  socket.on("newMessage", async (data) => {
+    console.log('Hola!');
+    mensajesApi.guardar(data);
+    await listarMensajes().then((res) => {
+      io.sockets.emit("mensajes", res);
+    });
+  });
+
+  // ---- PRODUCTOS ----
+  // carga inicial de productos con faker
+  // async function addProductsFaker() {
+  //   for (let i = 0; i < 5; i++) {
+  //     await productosApi.guardar(addRandomProducts());
+  //   }
+  //   const productos = await productosApi.listarAll();
+  //   socket.emit("productos", productos);
+  // }
+
+  // await addProductsFaker();
+
+  const productos = await productosApi.listarAll();
+  socket.emit("productos", productos);
 
   // actualizacion de productos
   socket.on("newProduct", async (data) => {
     productosApi.guardar(data);
     const productos = await productosApi.listarAll();
     io.sockets.emit("productos", productos);
-    // sockets.emit("productos", productos);
-  });
-
-  // carga inicial de mensajes
-  const messages = await mensajesApi.listarAll();
-  socket.emit("messages", messages);
-
-  // actualizacion de mensajes
-  socket.on("newMessage", async (message) => {
-    mensajesApi.guardar(message);
-    const messages = await mensajesApi.listarAll();
-    io.sockets.emit("messages", messages);
   });
 });
 
-async function listarMensajesNormalizados() {}
+async function listarMensajes() {
+  const archivoMensajes = await mensajesApi.listarAll();
+  const normalizados = normalizarMensajes(archivoMensajes);
+  return normalizados;
+}
+
+const normalizarMensajes = (mensajesConId) =>
+  normalize(mensajesConId, [mensajeSchema]);
 
 //--------------------------------------------
 // agrego middlewares
@@ -92,30 +109,6 @@ async function listarMensajesNormalizados() {}
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-
-//--------------------------------------------
-
-const productosRouterTest = new Router();
-
-app.use("/api/productos-test", productosRouterTest);
-
-function crearProductoRandom() {
-  return {
-    nombre: faker.commerce.product(),
-    price: faker.commerce.price(),
-    thumbnail: faker.image.imageUrl(),
-  };
-}
-
-productosRouterTest.get("/", async (req, res) => {
-  const productosRandom = [];
-  for (let i = 0; i < 5; i++) {
-    productosRandom.push(crearProductoRandom());
-  }
-  res.json(productosRandom);
-  // const productos = await productosApi.listarAll()
-  // res.json(productos)
-});
 
 //--------------------------------------------
 // inicio el servidor

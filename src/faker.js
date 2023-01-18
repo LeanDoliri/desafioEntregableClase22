@@ -10,11 +10,6 @@ function crearProductoRandom() {
 }
 
 const addRandomProducts = () =>{
-    // const productosRandom = []
-    // for (let i = 0; i < 5; i++) {
-    //     productosRandom.push(crearProductoRandom())
-    // }
-    const newProduct = crearProductoRandom()
     return crearProductoRandom()
 }
 
