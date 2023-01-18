@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Atún",
+    "price": "272.00",
+    "thumbnail": "http://placeimg.com/640/480"
+  },
+  {
+    "title": "Raton",
+    "price": "168.00",
+    "thumbnail": "http://placeimg.com/640/480"
+  },
+  {
+    "title": "Ensalada",
+    "price": "110.00",
+    "thumbnail": "http://placeimg.com/640/480"
+  },
+  {
+    "title": "Coche",
+    "price": "249.00",
+    "thumbnail": "http://placeimg.com/640/480"
+  },
+  {
+    "title": "Ensalada",
+    "price": "540.00",
+    "thumbnail": "http://placeimg.com/640/480"
+  }
+]
